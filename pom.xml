@@ -37,8 +37,8 @@
 
     <scm>
         <connection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-installer-factory-packages.git</conncetion>
-        <developerConnection> scm:svn:https://svn.apache.org/repos/asf/sling/trunk/installer/factories/packages</developerConnection>
-        <url>https://gitbox.apache.org/repos/asf?p=sling-org-apache-sling-installer-factory-packages.git.git</url>
+        <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-installer-factory-packages.git</developerConnection>
+        <url>https://gitbox.apache.org/repos/asf?p=sling-org-apache-sling-installer-factory-packages.git</url>
     </scm>
 
     <build>
