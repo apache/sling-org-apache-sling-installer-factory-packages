@@ -249,6 +249,9 @@ public class PackageTransformer implements ResourceTransformer, InstallTaskFacto
             JcrPackage pkg = null;
             try {
                 session = repository.loginAdministrative(null);
+                if (!configuration.observationManagerUserData().isEmpty()) {
+                    session.getWorkspace().getObservationManager().setUserData(configuration.observationManagerUserData());
+                }
                 final JcrPackageManager pkgMgr = pkgSvc.getPackageManager(session);
 
                 doExecute(ctx, pkgMgr, resource);

@@ -27,4 +27,6 @@ public @interface PackageTransformerConfiguration {
     boolean shouldCreateSnapshots() default true;
     @AttributeDefinition(name = "Use hollow packages", description = "Boolean flag indicating whether hollow packages (i.e. packages not containing actual content) should be used. This prevents the package file from being copied to the repository first before being installed (i.e. reduces required disk space, improves speed) but also prevents snapshot creation and uninstallation.")
     boolean shouldCreateHollowPackages() default false;
+    @AttributeDefinition(name = "Observation Manager's User Data", description = "Sets the user data on the observation manager (only affects the session used for package installation) to the given value. Leave empty to not set it. Can be used to check in EventListeners whether an event was caused by package installation/uninstallation.")
+    String observationManagerUserData() default "";
 }
