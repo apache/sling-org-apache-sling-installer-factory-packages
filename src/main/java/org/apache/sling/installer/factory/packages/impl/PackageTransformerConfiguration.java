@@ -18,6 +18,7 @@
  */
 package org.apache.sling.installer.factory.packages.impl;
 
+import org.apache.jackrabbit.vault.packaging.DependencyHandling;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
@@ -29,4 +30,6 @@ public @interface PackageTransformerConfiguration {
     boolean shouldCreateHollowPackages() default false;
     @AttributeDefinition(name = "Observation Manager's User Data", description = "Sets the user data on the observation manager (only affects the session used for package installation) to the given value. Leave empty to not set it. Can be used to check in EventListeners whether an event was caused by package installation/uninstallation.")
     String observationManagerUserData() default "";
+    @AttributeDefinition(name = "Dependency Handling", description = "Sets the dependency handling for package installation. Must have one of the values 'IGNORE', 'BEST_EFFORT', 'REQUIRED' or 'STRICT'.")
+    DependencyHandling dependencyHandling() default DependencyHandling.STRICT;
 }

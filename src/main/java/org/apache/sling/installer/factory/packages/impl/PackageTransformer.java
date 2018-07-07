@@ -34,6 +34,7 @@ import org.apache.jackrabbit.vault.fs.io.Archive;
 import org.apache.jackrabbit.vault.fs.io.ImportOptions;
 import org.apache.jackrabbit.vault.fs.io.ZipStreamArchive;
 import org.apache.jackrabbit.vault.packaging.Dependency;
+import org.apache.jackrabbit.vault.packaging.DependencyHandling;
 import org.apache.jackrabbit.vault.packaging.JcrPackage;
 import org.apache.jackrabbit.vault.packaging.JcrPackageManager;
 import org.apache.jackrabbit.vault.packaging.PackageException;
@@ -305,16 +306,20 @@ public class PackageTransformer implements ResourceTransformer, InstallTaskFacto
                     return;
                 }
 
-                // check if dependencies are installed
-                for (final Dependency d : pkg.getDefinition().getDependencies()) {
-                    if (pkgMgr.resolve(d, true) == null) {
-                        logger.info("Delaying installation of {} due to missing dependency {}.", pkgId, d);
-                        return;
+                // is dependency checking necessary?
+                if (configuration.dependencyHandling() == DependencyHandling.REQUIRED || configuration.dependencyHandling() == DependencyHandling.STRICT) {
+                    // check if dependencies are installed/available
+                    for (final Dependency d : pkg.getDefinition().getDependencies()) {
+                        if (pkgMgr.resolve(d, configuration.dependencyHandling() == DependencyHandling.STRICT ? true : false) == null) {
+                            logger.info("Delaying installation of {} due to missing dependency {}.", pkgId, d);
+                            return;
+                        }
                     }
                 }
 
                 // finally, install package
                 final ImportOptions opts = new ImportOptions();
+                opts.setDependencyHandling(configuration.dependencyHandling());
                 if (configuration.shouldCreateSnapshots()) {
                     pkg.install(opts);
                     ctx.log("Content package installed: {}", resource);
@@ -357,6 +362,7 @@ public class PackageTransformer implements ResourceTransformer, InstallTaskFacto
                 // we always have to do that, as there is no possibility to figure out whether the same package has already been installed
                 // https://issues.apache.org/jira/browse/JCRVLT-188
                 final ImportOptions opts = new ImportOptions();
+                opts.setDependencyHandling(configuration.dependencyHandling());
                 pkgMgr.extract(archive, opts, true);
             } finally {
                 archive.close();
@@ -395,6 +401,7 @@ public class PackageTransformer implements ResourceTransformer, InstallTaskFacto
             try {
                 if (pkg != null) {
                     final ImportOptions opts = new ImportOptions();
+                    opts.setDependencyHandling(configuration.dependencyHandling());
                     pkg.uninstall(opts);
                 }
             } finally {
