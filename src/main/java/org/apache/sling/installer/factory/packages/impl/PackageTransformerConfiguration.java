@@ -25,7 +25,7 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 @ObjectClassDefinition(name = "Apache Sling OSGi Installer Package Transformer", description = "Allows to configure how content packages are installed through the OSGi installer")
 public @interface PackageTransformerConfiguration {
     @AttributeDefinition(name = "Create Snapshots", description = "Boolean flag indicating whether prior to the installation of the package a snapshot of the repository should be created. Only relevant when hollow packages are disabled.")
-    boolean shouldCreateSnapshots() default true;
+    boolean shouldCreateSnapshots() default false;
     @AttributeDefinition(name = "Use hollow packages", description = "Boolean flag indicating whether hollow packages (i.e. packages not containing actual content) should be used. This prevents the package file from being copied to the repository first before being installed (i.e. reduces required disk space, improves speed) but also prevents snapshot creation and uninstallation.")
     boolean shouldCreateHollowPackages() default false;
     @AttributeDefinition(name = "Observation Manager's User Data", description = "Sets the user data on the observation manager (only affects the session used for package installation) to the given value. Leave empty to not set it. Can be used to check in EventListeners whether an event was caused by package installation/uninstallation.")
