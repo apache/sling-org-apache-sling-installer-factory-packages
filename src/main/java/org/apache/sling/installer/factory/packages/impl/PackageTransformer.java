@@ -41,6 +41,8 @@ import org.apache.jackrabbit.vault.packaging.JcrPackageManager;
 import org.apache.jackrabbit.vault.packaging.PackageException;
 import org.apache.jackrabbit.vault.packaging.PackageId;
 import org.apache.jackrabbit.vault.packaging.Packaging;
+import org.apache.jackrabbit.vault.packaging.events.PackageEvent;
+import org.apache.jackrabbit.vault.packaging.events.PackageEventListener;
 import org.apache.sling.installer.api.InstallableResource;
 import org.apache.sling.installer.api.tasks.ChangeStateTask;
 import org.apache.sling.installer.api.tasks.InstallTask;
@@ -68,9 +70,9 @@ import org.slf4j.LoggerFactory;
  * <li>and creates tasks for installing / removing of content packages
  * </ul>
 */
-@Component(service = { ResourceTransformer.class, InstallTaskFactory.class })
+@Component(service = { ResourceTransformer.class, InstallTaskFactory.class, PackageEventListener.class })
 @Designate(ocd=PackageTransformerConfiguration.class)
-public class PackageTransformer implements ResourceTransformer, InstallTaskFactory {
+public class PackageTransformer implements ResourceTransformer, InstallTaskFactory, PackageEventListener {
 
     /** The attribute holding the package id. */
     private static final String ATTR_PCK_ID = "package-id";
@@ -292,8 +294,7 @@ public class PackageTransformer implements ResourceTransformer, InstallTaskFacto
                 throws RepositoryException, PackageException, IOException {
 
             // open package
-            JcrPackage pkg = pkgMgr.open(pkgId);
-            try {
+            try (JcrPackage pkg = pkgMgr.open(pkgId))  {
                 if (pkg == null) {
                     String message = MessageFormat.format("Error during installation of {0}: Package {1} missing.", resource, pkgId);
                     logger.error(message);
@@ -333,13 +334,7 @@ public class PackageTransformer implements ResourceTransformer, InstallTaskFacto
 
                 setFinishedState(ResourceState.INSTALLED);
 
-                // notify retry handler to install dependent packages.
-                retryHandler.scheduleRetry();
-
-            } finally {
-                if (pkg != null) {
-                    pkg.close();
-                }
+                // notify retry handler to install dependent packages happens in the onPackageEvent
             }
         }
 
@@ -400,16 +395,12 @@ public class PackageTransformer implements ResourceTransformer, InstallTaskFacto
         @Override
         protected void doExecute(InstallationContext ctx, JcrPackageManager pkgMgr, TaskResource resource)
                 throws RepositoryException, PackageException, IOException {
-            JcrPackage pkg = pkgMgr.open(this.pkgId);
-            try {
+            
+            try (JcrPackage pkg = pkgMgr.open(this.pkgId)) {
                 if (pkg != null) {
                     final ImportOptions opts = new ImportOptions();
                     opts.setDependencyHandling(configuration.dependencyHandling());
                     pkg.uninstall(opts);
-                }
-            } finally {
-                if (pkg != null) {
-                    pkg.close();
                 }
             }
             ctx.log("Uninstalled content package {}", getResource());
@@ -479,6 +470,21 @@ public class PackageTransformer implements ResourceTransformer, InstallTaskFacto
             } else {
                 result.append('_');
             }
+        }
+    }
+
+    @Override
+    public void onPackageEvent(PackageEvent event) {
+        switch (event.getType()) {
+            case INSTALL:
+            case EXTRACT:
+                // this might even be triggered by this transformer itself
+                logger.debug("Package installation of package {} captured, triggering new OSGI installer cycle.", event.getId());
+                // notify retry handler to install dependent packages.
+                retryHandler.scheduleRetry();
+                break;
+            default:
+                break;
         }
     }
 }
