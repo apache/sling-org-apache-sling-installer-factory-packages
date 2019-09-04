@@ -405,7 +405,6 @@ public class PackageTransformer implements ResourceTransformer, InstallTaskFacto
             }
             ctx.log("Uninstalled content package {}", getResource());
             setFinishedState(ResourceState.UNINSTALLED);
-            retryHandler.scheduleRetry();
         }
     }
 
@@ -477,6 +476,7 @@ public class PackageTransformer implements ResourceTransformer, InstallTaskFacto
     public void onPackageEvent(PackageEvent event) {
         switch (event.getType()) {
             case INSTALL:
+            case EXTRACT_SUB_PACKAGES:
             case EXTRACT:
                 // this might even be triggered by this transformer itself
                 logger.debug("Package installation of package {} captured, triggering new OSGI installer cycle.", event.getId());
