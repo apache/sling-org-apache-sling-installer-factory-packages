@@ -20,6 +20,7 @@ package org.apache.sling.installer.factory.packages.impl;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -136,23 +137,25 @@ public class PackageTransformer implements ResourceTransformer, InstallTaskFacto
                 // for now we just take the filename from the URL
                 tr.setId(extractNameFromUrl(resource.getURL()));
             } else {
-                pck = pckMgr.upload(resource.getInputStream(), true, true);
-                if (pck.isValid()) {
-                    final PackageId pid = pck.getDefinition().getId();
-                    final Map<String, Object> attrs = new HashMap<String, Object>();
-                    attrs.put(ATTR_PCK_ID, pid.toString());
-                    tr.setId(pid.getGroup() + ':' + pid.getName());
-                    tr.setResourceType(RESOURCE_TYPE_REGULAR);
-                    tr.setAttributes(attrs);
-
-                    // version
-                    final String version = pid.getVersionString();
-                    if (version.length() > 0) {
-                        tr.setVersion(new Version(cleanupVersion(version)));
+                try (InputStream input = resource.getInputStream()) {
+                    pck = pckMgr.upload(input, true, true);
+                    if (pck.isValid()) {
+                        final PackageId pid = pck.getDefinition().getId();
+                        final Map<String, Object> attrs = new HashMap<String, Object>();
+                        attrs.put(ATTR_PCK_ID, pid.toString());
+                        tr.setId(pid.getGroup() + ':' + pid.getName());
+                        tr.setResourceType(RESOURCE_TYPE_REGULAR);
+                        tr.setAttributes(attrs);
+    
+                        // version
+                        final String version = pid.getVersionString();
+                        if (version.length() > 0) {
+                            tr.setVersion(new Version(cleanupVersion(version)));
+                        }
+                    } else {
+                        logger.warn("Package from resource {} is invalid", resource);
+                        return null;
                     }
-                } else {
-                    logger.warn("Package from resource {} is invalid", resource);
-                    return null;
                 }
             }
             return new TransformationResult[] { tr };
