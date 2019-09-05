@@ -114,6 +114,9 @@ public class PackageTransformer implements ResourceTransformer, InstallTaskFacto
      * @param resource The resource
      * @return {@code null} if not a content package, a result otherwise */
     private TransformationResult[] checkForPackage(final RegisteredResource resource) {
+        if (!resource.getURL().endsWith(".zip")) {
+            return null;
+        }
         // first check if this is a zip archive
         try (final ZipInputStream zin = new ZipInputStream(new BufferedInputStream(resource.getInputStream()))) {
             if (zin.getNextEntry() == null) {
