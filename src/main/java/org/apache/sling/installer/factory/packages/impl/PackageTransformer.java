@@ -478,8 +478,9 @@ public class PackageTransformer implements ResourceTransformer, InstallTaskFacto
             case INSTALL:
             case EXTRACT_SUB_PACKAGES:
             case EXTRACT:
+            case UNINSTALL:
                 // this might even be triggered by this transformer itself
-                logger.debug("Package installation of package {} captured, triggering new OSGI installer cycle.", event.getId());
+                logger.debug("Package un-/installation of package {} captured, triggering new OSGI installer cycle.", event.getId());
                 // notify retry handler to install dependent packages.
                 retryHandler.scheduleRetry();
                 break;
