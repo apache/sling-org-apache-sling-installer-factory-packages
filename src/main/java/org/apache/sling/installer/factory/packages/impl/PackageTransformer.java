@@ -215,8 +215,9 @@ public class PackageTransformer implements ResourceTransformer, InstallTaskFacto
             final String id = (String) resource.getAttribute(ATTR_PCK_ID);
             final PackageId pkgId = PackageId.fromString(id);
             if (pkgId == null) {
-                logger.error("Error during processing of {}: Package id is wrong/null.", resource);
-                return new ChangeStateTask(toActivate, ResourceState.IGNORED);
+                String message = MessageFormat.format("Error during processing of {0}: Package id cannot be parsed from {1}.", resource, id);
+                logger.error(message);
+                return new ChangeStateTask(toActivate, ResourceState.IGNORED, message);
             }
             if (resource.getState() == ResourceState.INSTALL) {
                 task = new InstallPackageTask(pkgId, toActivate);
@@ -229,13 +230,15 @@ public class PackageTransformer implements ResourceTransformer, InstallTaskFacto
                 task = new InstallHollowPackageTask(toActivate);
             } else {
                 // most probably uninstallation is not successful because this has also been installed as hollow-package!
-                logger.info("Do not uninstall {}: Hollow-Packages cannot be uninstalled.", resource);
-                return new ChangeStateTask(toActivate, ResourceState.IGNORED);
+                String message = MessageFormat.format("Do not uninstall {0}: Hollow-Packages cannot be uninstalled.", resource);
+                logger.info(message);
+                return new ChangeStateTask(toActivate, ResourceState.IGNORED, message);
             }
             break;
         default:
-            logger.error("Unupported type of {}: {}.", resource, resource.getType());
-            task = new ChangeStateTask(toActivate, ResourceState.IGNORED);
+            String message = MessageFormat.format("Unupported type of {0}: {1}.", resource, resource.getType());
+            logger.error(message);
+            task = new ChangeStateTask(toActivate, ResourceState.IGNORED, message);
         }
         return task;
     }
@@ -357,7 +360,6 @@ public class PackageTransformer implements ResourceTransformer, InstallTaskFacto
         protected void doExecute(InstallationContext ctx, JcrPackageManager pkgMgr, TaskResource resource)
                 throws RepositoryException, PackageException, IOException {
             Archive archive = new ZipStreamArchive(resource.getInputStream());
-            JcrPackage oldPackage = null;
             try {
                 archive.open(false);
                 // we always have to do that, as there is no possibility to figure out whether the same package has already been installed
@@ -367,9 +369,6 @@ public class PackageTransformer implements ResourceTransformer, InstallTaskFacto
                 pkgMgr.extract(archive, opts, true);
             } finally {
                 archive.close();
-                if (oldPackage != null) {
-                    oldPackage.close();
-                }
             }
         }
 
