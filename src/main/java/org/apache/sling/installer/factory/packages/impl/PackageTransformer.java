@@ -130,8 +130,8 @@ public class PackageTransformer implements ResourceTransformer, InstallTaskFacto
         Session session = null;
         JcrPackage pck = null;
         try {
-            // create an admin session
-            session = repository.loginAdministrative(null);
+            // create a service session (needs to have appropriate access rights)
+            session = repository.loginService(/* subservice name */null, null);
 
             final JcrPackageManager pckMgr = pkgSvc.getPackageManager(session);
             final TransformationResult tr = new TransformationResult();
