@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.sling</groupId>
         <artifactId>sling-bundle-parent</artifactId>
-        <version>35</version>
+        <version>36</version>
         <relativePath/>
     </parent>
 
@@ -34,6 +34,13 @@
     <description> 
         Provides support for content packages to the Apache Sling OSGi installer
     </description>
+
+    <properties>
+        <sling.java.version>8</sling.java.version>
+        <project.build.outputTimestamp>2020-01-14T08:04:00Z</project.build.outputTimestamp>
+        <!-- skip baseline till the first release -->
+        <bnd.baseline.skip>true</bnd.baseline.skip>
+    </properties>
 
     <scm>
         <connection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-installer-factory-packages.git</connection>
@@ -50,9 +57,11 @@
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.service.metatype.annotations</artifactId>
         </dependency>
+        <!-- OSGi framework 1.8, Core R6 (https://osgi.org/javadoc/r6/core/org/osgi/framework/package-summary.html) -->
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>osgi.core</artifactId>
+            <artifactId>org.osgi.framework</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>javax.jcr</groupId>
