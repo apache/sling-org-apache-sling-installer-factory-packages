@@ -6,4 +6,4 @@
 
 This module is part of the [Apache Sling](https://sling.apache.org) project.
 
-Provides support for content packages to the Apache Sling OSGi installer
+Provides support for content packages to the Apache Sling OSGi installer. Further information at <https://sling.apache.org/documentation/bundles/content-package-installer-factory.html>.
