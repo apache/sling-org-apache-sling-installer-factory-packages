@@ -236,9 +236,8 @@ public class PackageTransformer implements ResourceTransformer, InstallTaskFacto
             }
             break;
         default:
-            String message = MessageFormat.format("Unupported type of {0}: {1}.", resource, resource.getType());
-            logger.error(message);
-            task = new ChangeStateTask(toActivate, ResourceState.IGNORED, message);
+            String message = MessageFormat.format("Unsupported type of {0}: {1}.", resource, resource.getType());
+            logger.debug(message);
         }
         return task;
     }
