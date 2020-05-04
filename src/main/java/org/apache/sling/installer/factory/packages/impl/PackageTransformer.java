@@ -259,7 +259,8 @@ public class PackageTransformer implements ResourceTransformer, InstallTaskFacto
             Session session = null;
             JcrPackage pkg = null;
             try {
-                session = repository.loginAdministrative(null);
+                // create a service session (needs to have appropriate access rights)
+                session = repository.loginService(/* subservice name */null, null);
                 if (!configuration.observationManagerUserData().isEmpty()) {
                     session.getWorkspace().getObservationManager().setUserData(configuration.observationManagerUserData());
                 }
