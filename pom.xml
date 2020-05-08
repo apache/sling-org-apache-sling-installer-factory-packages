@@ -29,7 +29,7 @@
     <artifactId>org.apache.sling.installer.factory.packages</artifactId>
     <version>1.0.3-SNAPSHOT</version>
 
-    <name>Apache Sling Installer Content Package Support</name>
+    <name>Apache Sling Installer Packages Factory</name>
     <description> 
         Provides support for content packages to the Apache Sling OSGi installer
     </description>
