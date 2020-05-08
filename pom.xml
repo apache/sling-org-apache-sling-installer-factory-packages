@@ -27,7 +27,7 @@
     </parent>
 
     <artifactId>org.apache.sling.installer.factory.packages</artifactId>
-    <version>1.0.3-SNAPSHOT</version>
+    <version>1.0.4</version>
 
     <name>Apache Sling Installer Packages Factory</name>
     <description> 
@@ -36,14 +36,14 @@
 
     <properties>
         <sling.java.version>8</sling.java.version>
-        <project.build.outputTimestamp>2020-04-02T11:48:10Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2020-05-08T11:28:36Z</project.build.outputTimestamp>
     </properties>
 
     <scm>
         <connection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-installer-factory-packages.git</connection>
         <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-installer-factory-packages.git</developerConnection>
         <url>https://gitbox.apache.org/repos/asf?p=sling-org-apache-sling-installer-factory-packages.git</url>
-      <tag>HEAD</tag>
+      <tag>org.apache.sling.installer.factory.packages-1.0.4</tag>
   </scm>
 
     <dependencies>
